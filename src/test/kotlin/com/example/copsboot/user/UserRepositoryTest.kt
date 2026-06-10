@@ -13,7 +13,7 @@ class UserRepositoryTest @Autowired constructor(private val repository: UserRepo
         val roles = hashSetOf(UserRole.OFFICER)
         val user = repository.save(
             User(
-                UUID.randomUUID(),
+                repository.nextId(),
                 "yazan@example.com",
                 "Yazan123",
                 roles

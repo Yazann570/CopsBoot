@@ -9,7 +9,15 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotNull
 import java.util.UUID
+import com.example.orm.jpa.AbstractEntity
 
 @Entity
 @Table(name = "copsboot_user")
-class User(@Id val id: UUID, val email: String, val password: String, @ElementCollection(fetch= FetchType.EAGER) @Enumerated(EnumType.STRING) @field:NotNull val roles: Set<UserRole>)
+class User(
+    id: UserId,
+    val email: String,
+    val password: String,
+    @ElementCollection(fetch= FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @field:NotNull val roles: Set<UserRole>
+): AbstractEntity<UserId>(id)
