@@ -20,4 +20,15 @@ class User(
     @ElementCollection(fetch= FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @field:NotNull val roles: Set<UserRole>
-): AbstractEntity<UserId>(id)
+): AbstractEntity<UserId>(id){
+    companion object {
+        fun createOfficer(id: UserId, email: String, password: String) =
+            User(id, email, password, setOf(UserRole.OFFICER))
+
+        fun createCaptain(id: UserId, email: String, password: String) =
+            User(id, email, password, setOf(UserRole.CAPTAIN))
+
+        fun createAdmin(id: UserId, email: String, password: String) =
+            User(id, email, password, setOf(UserRole.ADMIN))
+    }
+}
