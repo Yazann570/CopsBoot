@@ -2,6 +2,7 @@ package com.example.copsboot.user
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.Optional
 
 @Service
 class UserServiceImpl(
@@ -19,5 +20,9 @@ class UserServiceImpl(
         )
 
         return repository.save(user)
+    }
+
+    override fun getUser(userId: UserId): Optional<User>{
+        return repository.findById(userId)
     }
 }

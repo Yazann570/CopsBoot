@@ -115,6 +115,7 @@ class OAuth2ServerConfiguration {
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                     .anyRequest().authenticated()
             }
             .oauth2ResourceServer { resourceServer ->

@@ -28,6 +28,7 @@ dependencies {
 	implementation("tools.jackson.module:jackson-module-kotlin")
 	implementation("org.springframework.boot:spring-boot-h2console")
 
+
 	implementation("org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server")
 	implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
 
@@ -39,6 +40,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

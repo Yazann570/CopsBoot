@@ -49,4 +49,12 @@ object Users{
     fun captain(): User{
         return captainUser
     }
+
+    fun newOfficer(email: String, password: String): User {
+        return User.createOfficer(
+            newRandomId(),
+            email,
+            encodePassword(password)
+        )
+    }
 }
