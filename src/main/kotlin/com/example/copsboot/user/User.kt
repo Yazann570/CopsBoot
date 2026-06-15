@@ -5,10 +5,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
-import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotNull
-import java.util.UUID
 import com.example.orm.jpa.AbstractEntity
 
 @Entity
@@ -22,7 +20,7 @@ class User(
     @field:NotNull val roles: Set<UserRole>
 ): AbstractEntity<UserId>(id){
     companion object {
-        fun createOfficer(id: UserId, email: String, password: String) =
+        fun createOfficer(id: UserId, email: String, password: String?) =
             User(id, email, password, setOf(UserRole.OFFICER))
 
         fun createCaptain(id: UserId, email: String, password: String) =

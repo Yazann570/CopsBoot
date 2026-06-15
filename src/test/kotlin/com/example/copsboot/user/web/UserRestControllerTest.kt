@@ -1,6 +1,5 @@
 package com.example.copsboot.user.web
 
-import com.example.copsboot.infrastructure.SpringProfiles
 import com.example.copsboot.user.UserService
 import com.example.copsboot.user.Users
 import tools.jackson.databind.ObjectMapper
@@ -9,28 +8,26 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.test.context.ActiveProfiles
+import com.example.copsboot.infrastructure.test.CopsbootControllerTest
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.mockito.Mockito.never
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import java.util.Optional
 
-@WebMvcTest(UserRestController::class)
-@ActiveProfiles(SpringProfiles.TEST)
-@Import(UserRestControllerTest.TestSecurityConfiguration::class)
+@CopsbootControllerTest(UserRestController::class)
 class UserRestControllerTest {
 
     @Autowired
@@ -97,6 +94,9 @@ class UserRestControllerTest {
             .andExpect(jsonPath("$.roles").isArray())
             .andExpect(jsonPath("$.roles", hasItem("OFFICER")))
 
+        `when`(service.findUserByEmail(email))
+            .thenReturn(Optional.empty())
+
         verify(service).createOfficer(email, password)
     }
 
@@ -125,6 +125,29 @@ class UserRestControllerTest {
         fun jwtDecoder(): JwtDecoder {
             return org.mockito.Mockito.mock(JwtDecoder::class.java)
         }
+    }
+
+    // This test checks the built-in @Size validator on CreateOfficerParameters.password.
+// If the password is too short, Spring must return 400 and must not call UserService.
+    @Test
+    fun testCreateOfficerIfPasswordIsTooShort() {
+        val email = "wim.deblauwe@example.com"
+        val password = "pwd"
+
+        val parameters = CreateOfficerParameters(
+            email = email,
+            password = password
+        )
+
+        mvc.perform(
+            post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(parameters))
+        )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errors[0].fieldName").value("password"))
+
+        verify(service, never()).createOfficer(email, password)
     }
 }
 
