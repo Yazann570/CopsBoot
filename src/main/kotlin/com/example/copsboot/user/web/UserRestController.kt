@@ -1,6 +1,6 @@
 package com.example.copsboot.user.web
 
-import com.example.copsboot.user.UserId
+import com.example.copsboot.infrastructure.security.userId
 import com.example.copsboot.user.UserNotFoundException
 import com.example.copsboot.user.UserService
 import jakarta.validation.Valid
@@ -43,10 +43,4 @@ class UserRestController(
 
     }
 
-    private fun Jwt.userId(): UserId{
-        val userId = getClaimAsString("user_id") ?:
-        throw IllegalStateException("JWT does not contain user_id claim")
-
-        return UserId(UUID.fromString(userId))
-    }
 }
