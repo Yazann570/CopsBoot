@@ -14,7 +14,7 @@ import com.example.orm.jpa.AbstractEntity
 class User(
     id: UserId,
     val email: String,
-    val password: String,
+    val password: String?,
     @ElementCollection(fetch= FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @field:NotNull val roles: Set<UserRole>
