@@ -54,6 +54,8 @@ dependencies {
 	testImplementation("io.rest-assured:rest-assured:5.5.0")
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	implementation("org.springframework.boot:spring-boot-starter-flyway")
 }
 
 kotlin {
