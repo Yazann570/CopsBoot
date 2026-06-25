@@ -21,4 +21,6 @@ object ApiClient{
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    val authApi: AuthApi = retrofit.create(AuthApi::class.java)
 }
