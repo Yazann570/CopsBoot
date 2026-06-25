@@ -31,7 +31,7 @@ class UserServiceImpl(
     override fun getUser(userId: UserId): Optional<User>{
         return repository.findById(userId)
     }
-    override fun findUserByEmail(email: String): Optional<User>{
-        return repository.findByEmail(email)
+    override fun findUserByEmail(email: String): Optional<User> {
+        return repository.findByEmail(email.trim().lowercase())
     }
 }

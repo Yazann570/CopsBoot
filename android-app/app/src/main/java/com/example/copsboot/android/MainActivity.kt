@@ -21,7 +21,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +36,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.copsboot.android.api.ApiClient
-import com.example.copsboot.android.ui.theme.CopsBootAndroidTheme
+import com.example.copsboot.android.ui.login.LoginUiState
+import com.example.copsboot.android.ui.login.LoginViewModel
 import kotlinx.coroutines.launch
 import java.nio.charset.Charset
 
@@ -68,15 +69,29 @@ fun CopsBootApp(){
     }
 }
 
+
 @Composable
-fun LoginScreen(){
-    var email by remember {mutableStateOf("")}
-    var password by remember {mutableStateOf("")}
-    var message by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+fun LoginScreen(
+    loginViewModel: LoginViewModel = viewModel()
+){
+    val uiState = loginViewModel.uiState
 
-    val coroutineScope = rememberCoroutineScope()
-
+    LoginContent(
+        uiState = uiState,
+        onEmailChanged = loginViewModel::onEmailChanged,
+        onPasswordChanged = loginViewModel::onPasswordChanged,
+        onLoginClicked = loginViewModel::login,
+        onFillTestOfficerClicked = loginViewModel::fillTestOfficer
+    )
+}
+@Composable
+fun LoginContent(
+    uiState: LoginUiState,
+    onEmailChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onLoginClicked: () -> Unit,
+    onFillTestOfficerClicked: () -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -108,8 +123,8 @@ fun LoginScreen(){
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = {email = it},
+                    value = uiState.email,
+                    onValueChange = onEmailChanged,
                     label = {Text("Email")},
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -121,8 +136,8 @@ fun LoginScreen(){
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = uiState.password,
+                    onValueChange = onPasswordChanged,
                     label = { Text("Password") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -135,52 +150,11 @@ fun LoginScreen(){
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = {
-                        coroutineScope.launch {
-                            isLoading = true
-                            message = ""
-
-                            try{
-                                val response = ApiClient.authApi.login(
-                                    authorization = createBasicAuthHeader(),
-                                    grantType = "password",
-                                    username = email,
-                                    password = password,
-                                    scope = SCOPE
-                                )
-                                if(response.isSuccessful){
-                                    val tokenResponse = response.body()
-                                    val token = tokenResponse?.accessToken
-                                    val tokenType = tokenResponse?.tokenType ?: "Bearer"
-                                    if(token.isNullOrBlank()){
-                                        message = "Login succeeded, but no access token was returned."
-                                    } else{
-                                        val authorizationHeader = "$tokenType $token"
-
-                                        val currentUserResponse = ApiClient.userApi.getCurrentUser(
-                                            authorizaton = authorizationHeader
-                                        )
-                                        message = if(currentUserResponse.isSuccessful){
-                                            val currentUserJson = currentUserResponse.body()?.string()
-                                            "Login successful.\n\nCurrent user: \n$currentUserJson"
-                                        }else{
-                                            "Login succeeded, but /api/users/me failed. Status code: ${currentUserResponse.code()}"
-                                        }
-                                    }
-                                } else{
-                                    message = "Login failed. Status code: ${response.code()}"
-                                }
-                            }catch(exception: Exception){
-                                message = "Network error: ${exception.message}"
-                            }finally{
-                                isLoading = false
-                            }
-                        }
-                    },
+                    onClick = onLoginClicked,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading
+                    enabled = !uiState.isLoading
                 ){
-                    if(isLoading)
+                    if(uiState.isLoading)
                         CircularProgressIndicator()
                     else
                         Text("Login")
@@ -189,20 +163,17 @@ fun LoginScreen(){
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedButton(
-                    onClick = {
-                        email = "officer@example.com"
-                        password = "officer"
-                    },
+                    onClick = onFillTestOfficerClicked,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading
+                    enabled = !uiState.isLoading
                 ) {
                     Text("Fill test officer")
                 }
-                if (message.isNotBlank()) {
+                if (uiState.message.isNotBlank()) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = message,
+                        text = uiState.message,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -211,18 +182,21 @@ fun LoginScreen(){
     }
 }
 
-private fun createBasicAuthHeader(): String {
-    val credentials = "$CLIENT_ID:$CLIENT_SECRET"
-    val encodedCredentials = Base64.encodeToString(
-        credentials.toByteArray(Charset.forName("UTF-8")),
-        Base64.NO_WRAP
-    )
-
-    return "Basic $encodedCredentials"
-}
 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview(){
-    CopsBootApp()
+    MaterialTheme{
+        LoginContent(
+            uiState = LoginUiState(
+                email = "officer@example.com",
+                password = "officer",
+                message = "Login successful"
+            ),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onLoginClicked = {},
+            onFillTestOfficerClicked = {}
+        )
+    }
 }
