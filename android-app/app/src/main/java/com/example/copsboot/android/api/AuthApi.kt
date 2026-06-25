@@ -9,7 +9,7 @@ import retrofit2.http.POST
 
 interface AuthApi{
     @FormUrlEncoded
-    @POST("oauth2/token")
+    @POST("oauth/token")
     suspend fun login(
         @Header("Authorization") authorization: String,
         @Field("grant_type") grantType: String,

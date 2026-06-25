@@ -11,11 +11,17 @@ class UserServiceImpl(
 ) : UserService {
 
     override fun createOfficer(email: String, password: String): User {
+        val normalizedEmail = email.trim().lowercase()
+
+        if (repository.findByEmail(normalizedEmail).isPresent) {
+            throw IllegalArgumentException("User with email $normalizedEmail already exists")
+        }
+
         val encodedPassword = requireNotNull(passwordEncoder.encode(password))
 
         val user = User.createOfficer(
             repository.nextId(),
-            email,
+            normalizedEmail,
             encodedPassword
         )
 
