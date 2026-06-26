@@ -19,12 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.copsboot.android.model.UserDto
+import com.example.copsboot.android.model.UserIdDto
 
 @Composable
 fun HomeScreen(
-    currentUserJson: String,
+    currentUser: UserDto?,
     onLogoutClicked: () -> Unit
 ) {
+    val email = currentUser?.email ?: "Unknown email"
+    val id = currentUser?.id?.id ?: currentUser?.id?.value ?: "Unknown id"
+    val roles = currentUser?.roles?.takeIf{it.isNotEmpty()}?.joinToString(", ") ?: "No roles"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,11 +67,22 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = "Email: $email",
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = currentUserJson,
+                    text = "ID: $id",
                     style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                        text = "Roles: $roles",
+                style = MaterialTheme.typography.bodySmall
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -86,12 +103,14 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     MaterialTheme {
         HomeScreen(
-            currentUserJson = """
-                {
-                  "email": "officer@example.com",
-                  "roles": ["OFFICER"]
-                }
-            """.trimIndent(),
+            currentUser = UserDto(
+                id = UserIdDto(
+                    id = "",
+                    value = ""
+                ),
+                email = "officer@example.com",
+                roles = listOf("OFFICER")
+            ),
             onLogoutClicked = {}
         )
     }

@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.copsboot.android.api.ApiClient
 import kotlinx.coroutines.launch
 
@@ -63,17 +62,17 @@ class LoginViewModel : ViewModel() {
                     }else{
                         val authorizationHeader = "$tokenType $token"
                         val currentUserResponse = ApiClient.userApi.getCurrentUser(
-                            authorizaton = authorizationHeader
+                            authorization = authorizationHeader
                         )
 
                         uiState = if(currentUserResponse.isSuccessful){
-                            val currentUserJson = currentUserResponse.body()?.string().orEmpty()
+                            val currentUser = currentUserResponse.body()
 
                             uiState.copy(
                                 isLoggedIn = true,
                                 accessToken = token,
-                                currentUserJson = currentUserJson,
-                                message = "Login successful.\n\nCurrent user:\n$currentUserJson"
+                                currentUser = currentUser,
+                                message = ""
                             )
                         }else{
                             uiState.copy(

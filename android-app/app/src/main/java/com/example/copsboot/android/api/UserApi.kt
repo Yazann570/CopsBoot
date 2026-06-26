@@ -1,5 +1,6 @@
 package com.example.copsboot.android.api
 
+import com.example.copsboot.android.model.UserDto
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
@@ -8,6 +9,6 @@ import retrofit2.http.Header
 interface UserApi{
     @GET("api/users/me")
     suspend fun getCurrentUser(
-        @Header("Authorization") authorizaton: String
-    ): Response<ResponseBody>
+        @Header("Authorization") authorization: String
+    ): Response<UserDto>
 }

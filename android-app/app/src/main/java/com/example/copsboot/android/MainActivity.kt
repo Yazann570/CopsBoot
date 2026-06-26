@@ -44,6 +44,7 @@ import com.example.copsboot.android.ui.login.LoginUiState
 import com.example.copsboot.android.ui.login.LoginViewModel
 import kotlinx.coroutines.launch
 import java.nio.charset.Charset
+import com.example.copsboot.android.model.UserDto
 
 private const val CLIENT_ID = "copsboot-mobile-client"
 private const val CLIENT_SECRET = "ccUyb6vS4S8nxfbKPCrN"
@@ -80,7 +81,7 @@ fun LoginScreen(
 
     if(uiState.isLoggedIn){
         HomeScreen(
-            currentUserJson = uiState.currentUserJson,
+            currentUser = uiState.currentUser,
             onLogoutClicked = loginViewModel::logout
         )
     }else{
