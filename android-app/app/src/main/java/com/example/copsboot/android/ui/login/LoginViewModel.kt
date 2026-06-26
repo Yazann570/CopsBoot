@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.copsboot.android.api.ApiClient
+import com.example.copsboot.android.navigation.AppScreen
 import kotlinx.coroutines.launch
 
 
@@ -69,7 +70,7 @@ class LoginViewModel : ViewModel() {
                             val currentUser = currentUserResponse.body()
 
                             uiState.copy(
-                                isLoggedIn = true,
+                                currentScreen = AppScreen.HOME,
                                 accessToken = token,
                                 currentUser = currentUser,
                                 message = ""

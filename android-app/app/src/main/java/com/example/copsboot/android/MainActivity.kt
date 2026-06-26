@@ -1,6 +1,7 @@
 package com.example.copsboot.android
 
 import android.os.Bundle
+import com.example.copsboot.android.navigation.AppScreen
 import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -79,19 +80,22 @@ fun LoginScreen(
 ){
     val uiState = loginViewModel.uiState
 
-    if(uiState.isLoggedIn){
-        HomeScreen(
-            currentUser = uiState.currentUser,
-            onLogoutClicked = loginViewModel::logout
-        )
-    }else{
-        LoginContent(
-            uiState = uiState,
-            onEmailChanged = loginViewModel::onEmailChanged,
-            onPasswordChanged = loginViewModel::onPasswordChanged,
-            onLoginClicked = loginViewModel::login,
-            onFillTestOfficerClicked = loginViewModel::fillTestOfficer
-        )
+    when(uiState.currentScreen){
+        AppScreen.LOGIN -> {
+            LoginContent(
+                uiState = uiState,
+                onEmailChanged = loginViewModel::onEmailChanged,
+                onPasswordChanged = loginViewModel::onPasswordChanged,
+                onLoginClicked = loginViewModel::login,
+                onFillTestOfficerClicked = loginViewModel::fillTestOfficer
+            )
+        }
+        AppScreen.HOME -> {
+            HomeScreen(
+                currentUser = uiState.currentUser,
+                onLogoutClicked = loginViewModel::logout
+            )
+        }
     }
 }
 
