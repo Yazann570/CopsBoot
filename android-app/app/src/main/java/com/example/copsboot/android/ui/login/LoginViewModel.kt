@@ -31,6 +31,11 @@ class LoginViewModel : ViewModel() {
             message = ""
         )
     }
+
+    fun logout(){
+        uiState = LoginUiState()
+    }
+
     fun login(){
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -62,8 +67,12 @@ class LoginViewModel : ViewModel() {
                         )
 
                         uiState = if(currentUserResponse.isSuccessful){
-                            val currentUserJson = currentUserResponse.body()?.string()
+                            val currentUserJson = currentUserResponse.body()?.string().orEmpty()
+
                             uiState.copy(
+                                isLoggedIn = true,
+                                accessToken = token,
+                                currentUserJson = currentUserJson,
                                 message = "Login successful.\n\nCurrent user:\n$currentUserJson"
                             )
                         }else{
@@ -90,6 +99,8 @@ class LoginViewModel : ViewModel() {
         }
     }
 }
+
+
 private fun createBasicAuthHeader(): String {
     val credentials = "$CLIENT_ID:$CLIENT_SECRET"
 

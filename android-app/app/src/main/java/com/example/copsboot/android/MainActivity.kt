@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -76,14 +77,70 @@ fun LoginScreen(
 ){
     val uiState = loginViewModel.uiState
 
-    LoginContent(
-        uiState = uiState,
-        onEmailChanged = loginViewModel::onEmailChanged,
-        onPasswordChanged = loginViewModel::onPasswordChanged,
-        onLoginClicked = loginViewModel::login,
-        onFillTestOfficerClicked = loginViewModel::fillTestOfficer
-    )
+    if(uiState.isLoggedIn){
+        HomeScreen(
+            currentUserJson = uiState.currentUserJson,
+            onLogoutClicked = loginViewModel::logout
+        )
+    }else{
+        LoginContent(
+            uiState = uiState,
+            onEmailChanged = loginViewModel::onEmailChanged,
+            onPasswordChanged = loginViewModel::onPasswordChanged,
+            onLoginClicked = loginViewModel::login,
+            onFillTestOfficerClicked = loginViewModel::fillTestOfficer
+        )
+    }
 }
+
+@Composable
+fun HomeScreen(
+    currentUserJson: String,
+    onLogoutClicked: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        ){
+            Column(
+                modifier = Modifier.padding(24.dp)
+            ){
+                Text(
+                    text = "Welcome to CopsBoot",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Current user: ",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = currentUserJson,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onLogoutClicked,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Text("Logout")
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun LoginContent(
     uiState: LoginUiState,
@@ -197,6 +254,22 @@ fun LoginScreenPreview(){
             onPasswordChanged = {},
             onLoginClicked = {},
             onFillTestOfficerClicked = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    MaterialTheme {
+        HomeScreen(
+            currentUserJson = """
+                {
+                  "email": "officer@example.com",
+                  "roles": ["OFFICER"]
+                }
+            """.trimIndent(),
+            onLogoutClicked = {}
         )
     }
 }
