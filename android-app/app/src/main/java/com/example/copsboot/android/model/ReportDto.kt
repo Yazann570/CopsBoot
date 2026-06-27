@@ -2,7 +2,7 @@ package com.example.copsboot.android.model
 
 data class ReportDto(
     val id: ReportIdDto?,
-    val reported: String?,
+    val reporter: String?,
     val dateTime: String?,
     val description: String?
 )

@@ -16,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -58,6 +60,7 @@ fun ReportScreen(
         onCreateReportClicked = {
             reportViewModel.createReport(context)
         },
+        onCreateAnotherClicked = reportViewModel::clearCreatedReport,
         onBackClicked = onBackClicked
     )
 }
@@ -70,11 +73,13 @@ fun ReportContent(
     onNumberOfInvolvedCarsChanged: (String) -> Unit,
     onPickImageClicked: () -> Unit,
     onCreateReportClicked: () -> Unit,
+    onCreateAnotherClicked: () -> Unit,
     onBackClicked: () -> Unit
 ){
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -192,6 +197,38 @@ fun ReportContent(
                         text = uiState.message,
                         style = MaterialTheme.typography.bodyMedium
                     )
+                }
+
+                if (uiState.createdReport != null) {
+                    val report = uiState.createdReport
+
+                    val reportId = report.id?.id
+                        ?: report.id?.value
+                        ?: "Unknown id"
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Created report",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text("Report ID: $reportId")
+                    Text("Reporter: ${report.reporter ?: "Unknown reporter"}")
+                    Text("Date/time: ${report.dateTime ?: "Unknown date"}")
+                    Text("Description: ${report.description ?: "No description"}")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedButton(
+                        onClick = onCreateAnotherClicked,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Create another report")
+                    }
                 }
 
             }

@@ -52,7 +52,9 @@ class ReportViewModel(
             message = ""
         )
     }
-
+    fun clearCreatedReport() {
+        uiState = ReportUiState()
+    }
     fun createReport(context: Context) {
         val description = uiState.description.trim()
         val imageUri = uiState.selectedImageUri
