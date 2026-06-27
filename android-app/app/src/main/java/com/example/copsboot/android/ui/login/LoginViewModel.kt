@@ -33,6 +33,18 @@ class LoginViewModel(
         )
     }
 
+    fun openCreateReport() {
+        uiState = uiState.copy(
+            currentScreen = AppScreen.CREATE_REPORT
+        )
+    }
+
+    fun openHome() {
+        uiState = uiState.copy(
+            currentScreen = AppScreen.HOME
+        )
+    }
+
     fun logout() {
         authRepository.logout()
         uiState = LoginUiState()

@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.copsboot.android.ui.report.ReportScreen
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -49,7 +50,14 @@ fun LoginScreen(
         AppScreen.HOME -> {
             HomeScreen(
                 currentUser = uiState.currentUser,
+                onCreateReportClicked = loginViewModel::openCreateReport,
                 onLogoutClicked = loginViewModel::logout
+            )
+        }
+
+        AppScreen.CREATE_REPORT -> {
+            ReportScreen(
+                onBackClicked = loginViewModel::openHome
             )
         }
     }

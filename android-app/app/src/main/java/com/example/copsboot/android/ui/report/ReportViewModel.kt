@@ -13,38 +13,57 @@ import kotlinx.coroutines.launch
 
 class ReportViewModel(
     private val reportRepository: ReportRepository = ReportRepository()
-): ViewModel(){
+) : ViewModel() {
 
     var uiState by mutableStateOf(ReportUiState())
         private set
 
-    fun onDescriptionChanged(isTrafficIncident: Boolean){
+    fun onDescriptionChanged(newDescription: String) {
+        uiState = uiState.copy(
+            description = newDescription,
+            message = ""
+        )
+    }
+
+    fun onTrafficIncidentChanged(isTrafficIncident: Boolean) {
         uiState = uiState.copy(
             trafficIncident = isTrafficIncident,
-            numberOfInvolvedCars = if(isTrafficIncident){
+            numberOfInvolvedCars = if (isTrafficIncident) {
                 uiState.numberOfInvolvedCars
-            } else{
+            } else {
                 ""
             },
             message = ""
         )
     }
-    fun onImageSelected(uri: Uri?){
+
+    fun onNumberOfInvolvedCarsChanged(newValue: String) {
+        val digitsOnly = newValue.filter { it.isDigit() }
+
+        uiState = uiState.copy(
+            numberOfInvolvedCars = digitsOnly,
+            message = ""
+        )
+    }
+
+    fun onImageSelected(uri: Uri?) {
         uiState = uiState.copy(
             selectedImageUri = uri,
             message = ""
         )
     }
-    fun createReport(context: Context){
+
+    fun createReport(context: Context) {
         val description = uiState.description.trim()
         val imageUri = uiState.selectedImageUri
 
-        if(description.isBlank()){
+        if (description.isBlank()) {
             uiState = uiState.copy(
                 message = "Description is required."
             )
             return
         }
+
         if (!description.lowercase().contains("suspect")) {
             uiState = uiState.copy(
                 message = "Description must contain the word suspect."
@@ -67,11 +86,13 @@ class ReportViewModel(
             )
             return
         }
+
         viewModelScope.launch {
             uiState = uiState.copy(
                 isLoading = true,
                 message = ""
             )
+
             val result = reportRepository.createReport(
                 context = context,
                 description = description,
@@ -79,13 +100,15 @@ class ReportViewModel(
                 numberOfInvolvedCars = numberOfInvolvedCars,
                 imageUri = imageUri
             )
-            uiState = when(result){
+
+            uiState = when (result) {
                 is ReportResult.Success -> {
                     ReportUiState(
                         message = "Crime report created successfully.",
                         createdReport = result.report
                     )
                 }
+
                 is ReportResult.Error -> {
                     uiState.copy(
                         isLoading = false,
@@ -96,4 +119,3 @@ class ReportViewModel(
         }
     }
 }
-

@@ -25,6 +25,7 @@ import com.example.copsboot.android.model.UserIdDto
 @Composable
 fun HomeScreen(
     currentUser: UserDto?,
+    onCreateReportClicked: () -> Unit,
     onLogoutClicked: () -> Unit
 ) {
     val email = currentUser?.email ?: "Unknown email"
@@ -88,6 +89,15 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
+                    onClick = onCreateReportClicked,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Text("Create crime report")
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
                     onClick = onLogoutClicked,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -104,13 +114,11 @@ fun HomeScreenPreview() {
     MaterialTheme {
         HomeScreen(
             currentUser = UserDto(
-                id = UserIdDto(
-                    id = "",
-                    value = ""
-                ),
+                id = UserIdDto(id = "123", value = ""),
                 email = "officer@example.com",
                 roles = listOf("OFFICER")
             ),
+            onCreateReportClicked = {},
             onLogoutClicked = {}
         )
     }
