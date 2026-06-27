@@ -48,6 +48,12 @@ class AuthRepository {
                 )
             }
 
+            val currentUser = currentUserResponse.body()
+            AuthSession.saveSession(
+                accessToken = token,
+                tokenType = tokenType,
+                currentUser = currentUser
+            )
             AuthResult.Success(
                 accessToken = token,
                 currentUser = currentUserResponse.body()
@@ -59,6 +65,9 @@ class AuthRepository {
         }
     }
 
+    fun logout(){
+        AuthSession.clearSession()
+    }
     private fun createBasicAuthHeader(): String {
         val credentials = "$CLIENT_ID:$CLIENT_SECRET"
 

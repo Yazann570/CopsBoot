@@ -18,6 +18,6 @@ class DevelopmentDbInitializer(
     }
 
     private fun createTestUsers() {
-        userService.createOfficer("Ahmad@example.com", "ahmad")
+        userService.createOfficer("slurp@example.com", "slurp")
     }
 }

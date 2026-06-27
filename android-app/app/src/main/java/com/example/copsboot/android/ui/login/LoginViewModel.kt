@@ -34,6 +34,7 @@ class LoginViewModel(
     }
 
     fun logout() {
+        authRepository.logout()
         uiState = LoginUiState()
     }
 
