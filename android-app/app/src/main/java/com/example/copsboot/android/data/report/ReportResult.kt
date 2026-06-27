@@ -1,4 +1,4 @@
-package com.example.copsboot.android.data
+package com.example.copsboot.android.data.report
 
 import com.example.copsboot.android.model.ReportDto
 

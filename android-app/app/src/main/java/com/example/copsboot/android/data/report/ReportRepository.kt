@@ -2,8 +2,10 @@ package com.example.copsboot.android.data.report
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.copsboot.android.api.ApiClient
-import com.example.copsboot.android.data.ReportResult
+import com.example.copsboot.android.data.report.ReportResult
 import com.example.copsboot.android.data.auth.AuthSession
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -13,6 +15,7 @@ import java.time.format.DateTimeFormatter
 
 class ReportRepository{
 
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createReport(
         context: Context,
         description: String,
