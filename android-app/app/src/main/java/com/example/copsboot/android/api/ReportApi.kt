@@ -17,7 +17,7 @@ interface ReportApi{
     suspend fun createReport(
         @Header("Authorization") authorization: String,
         @Part("dateTime") dateTime: RequestBody,
-        @Part("description") description: String,
+        @Part("description") description: RequestBody,
         @Part("trafficIncident") trafficIncident: RequestBody,
         @Part("numberOfInvolvedCars") numberOfInvolvedCars: RequestBody,
         @Part image: MultipartBody.Part
